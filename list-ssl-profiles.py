@@ -23,8 +23,8 @@ lb = bigsuds.BIGIP(**credentials)
 vips = lb.LocalLB.VirtualServer.get_list()
 
 for v in vips:
+    vip_destination = lb.LocalLB.VirtualServer.get_destination([v])[0]
     vip_profiles = lb.LocalLB.VirtualServer.get_profile([v])
-    for p in vip_profiles[0]:
-        if p['profile_type'] == 'PROFILE_TYPE_CLIENT_SSL':
-          print "%s: %s" % (v, p['profile_name'])
+    for p in [ profile for profile in vip_profiles[0] if profile['profile_type'] == 'PROFILE_TYPE_CLIENT_SSL']:
+      print "{0} {1}:{2}: {3}".format(v, vip_destination['address'], vip_destination['port'], p['profile_name'])
 
